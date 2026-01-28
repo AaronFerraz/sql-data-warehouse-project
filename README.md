@@ -7,7 +7,7 @@ Esse projeto tem por objetivo ter a experiência de construir um Data Warehouse 
 
 ## Data Architecture 
 A Arquitetura de Dados escolhida foi a Medallion, composta por três camadas:
-![Data Architecture](docs\data_architecture.png)
+![Data Architecture](docs/data_architecture.png)
 
 1. ``Bronze Layer``: Armazena dados brutos como eles vieram do sistema de origem. Os dados são ingeridos de arquivos CSV dentro do MySQL.
 2. ``Silver Layer``: Essa camada inclui processos de data cleasing (limpeza de dados), standardization (padronização) e normalização para preparar os dados para a análise.
@@ -35,7 +35,7 @@ A Arquitetura de Dados escolhida foi a Medallion, composta por três camadas:
 <br>
 
 **Organização das Tarefas pelo Notion:**
-![Data Architecture](docs\project-schedule.png)
+![Data Architecture](docs/project-schedule.png)
 
 
 <br>
