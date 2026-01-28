@@ -97,4 +97,4 @@ data-warehouse-project/
 ### About me
 Sou Aaron Ferraz, Entusiasta de Dados a procura de se aprimorar cada vez mais.
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](www.linkedin.com/in/aaronferraz)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/aaronferraz)
