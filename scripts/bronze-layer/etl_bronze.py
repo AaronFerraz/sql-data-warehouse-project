@@ -1,15 +1,14 @@
-import mysql.connector
+import pandas as pd
+from sqlalchemy import create_engine, text
 import os
 import time
+from urllib.parse import quote_plus
 
 
-db_config = {
-    'user': 'root',
-    'password': 'A@ron123',
-    'host': '127.0.0.1',
-    'database': 'bronze',
-    'allow_local_infile': True
-}
+senha_bruta = 'A@ron123'
+senha_codificada = quote_plus(senha_bruta) # Transforma o @ em %40
+
+engine = create_engine(f'mysql+mysqlconnector://root:{senha_codificada}@127.0.0.1/bronze')
 
 files = [
     ('crm_cust_info', 'cust_info.csv', 'source_crm'),
@@ -23,45 +22,31 @@ files = [
 base_path = r"C:\\Users\\AARON\\Documents\\Dev\\Databases\\Projetos\\sql-data-warehouse-project\\datasets"
 
 try:
-    conn = mysql.connector.connect(**db_config)
-    cursor = conn.cursor()
-
-    cursor.execute('SET GLOBAL local_infile = 1;')
-    
     beginning = time.time()
     print('Iniciando o carregamento dos dados...\n')
 
     # Data Ingestion
-    for table, filename, folder in files:
-        print(f"Carregando {table}...")
+    with engine.connect() as conn:
 
-        file_path = os.path.join(base_path, folder, filename).replace('\\', '/')
+        for table, filename, folder in files:
+            print(f"Carregando {table}...")
 
-        cursor.execute(f'TRUNCATE TABLE {table};')
-        query = f"""
-          LOAD DATA LOCAL INFILE '{file_path}'
-          INTO TABLE {table}
-          FIELDS TERMINATED BY ','
-          LINES TERMINATED BY '\\r\\n'
-          IGNORE 1 ROWS; 
-        """
+            file_path = os.path.join(base_path, folder, filename)
+            conn.execute(text(f'TRUNCATE TABLE {table};'))
 
-        cursor.execute(query)
-        conn.commit()
-        print(f"Sucesso: {table}")
-        print('-' * 40)
+            df = pd.read_csv(file_path, encoding='utf-8-sig')
+            df.columns = df.columns.str.lower().str.strip()
+            df.to_sql(table, con=conn, if_exists='append', index=False, chunksize=1000)
+
+            print(f"Sucesso: {table} ({len(df)}) linhas")
+            print('-' * 40)
     
+        conn.commit()
+        
     end = time.time()
     total_time = end - beginning 
-
     print(f'Os dados foram carregados com sucesso em {total_time:.2f} segundos.')
 
 
-except mysql.connector.Error as err:
+except Exception as err:
     print(f"Erro: {err}")
-
-finally:
-    if cursor:
-        cursor.close()
-    if conn:
-        conn.close()
